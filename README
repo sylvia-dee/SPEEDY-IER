@@ -1,0 +1,45 @@
+SPEEDY-IER: READ.me File
+Sylvia Dee <sylvia.dee@rice.edu>
+
+Modified 01/07/2020
+
+SPEEDY-IER is a fast‐physics atmospheric circulation model suitable for long ensemble integrations: 
+the efficient AGCM Simplified Parameterizations, Primitive Equation Dynamics (SPEEDY), with 
+newly added water isotope physics. The model (SPEEDY‐isotope‐enabled reconstructions (IER)) 
+simulates the hydrological cycle and isotope ratios in atmospheric water at a fraction of 
+the computational cost of Intergovernmental Panel on Climate Change (IPCC)‐class GCMs. 
+
+Publication Link: https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2014JD022194
+
+
+Compilation and run instructions for SPEEDY-IER:
+
+
+To compile, go into the 'run' directory and use the command >> ./run_speedy.bash T30 DR1 0
+You have to give it those three commands, as specified in the bash script: the resolution 
+(T30/T21), experiment name (3 characters only), and restart (0 for no, 1 for yes).
+
+This bash script should compile the model, searching for all the source code in the 'source' 
+file (this is where the fortran 'makefile' is. 
+
+To run the model, use 'run_speedy-ier.pbs' which should appear in the temp folder created
+upon compilation with the run name (e.g. TMP_XXX). 
+
+When you run the model, it will send a call to open the input files, which are in v40.input. 
+This is the time step, physics parameters, etc. 
+
+When you run the model it should ask you four questions. 
+One is "would you like to modify the time stepping parameters?" 
+-- You can say "y" to this and then change the start date depending on what input files you are using. 
+
+If you wanted to run it with historical SSTs you'd have to start at 1850, etc. 
+Then change the variable 'nmonths' to reflect the number of years you want it to run for. 
+
+Example:
+'IYEAR = 1980' and 'NMONTHS = 12' 
+
+You can also modify these fields directly in the ver40.input folder.
+
+The "data" folder contains the forcing files. 
+You can reconfigure the file "inpfiles.s" which is in ver40.input to change which forcing files are used. 
+
