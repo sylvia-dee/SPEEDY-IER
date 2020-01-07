@@ -1,0 +1,8 @@
+
+
+      PARAMETER (KX=8)
+
+      PARAMETER (KX2=2*KX, KXM=KX-1, KXP=KX+1)
+
+      PARAMETER (NTR=4)
+

@@ -1,0 +1,25 @@
+++ pwd
+++ echo 'the executable file...'
+++ ls -l speedy.exec
+ls: cannot access speedy.exec: No such file or directory
+++ ulimit -s unlimited
+++ ulimit -d unlimited
+++ ./speedy.exec
+/var/lib/torque/mom_priv/jobs/10260.geosys.usc.edu.SC: line 29: ./speedy.exec: No such file or directory
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+++ mv out.lis ../output/exp_sd4/atgcmsd4.lis
+++ mv fort.10 ../output/exp_sd4/atgcmsd4.rst
+mv: cannot stat `fort.10': No such file or directory
+++ mv 'at*sd4.ctl' ../output/exp_sd4
+mv: cannot stat `at*sd4.ctl': No such file or directory
+++ mv 'at*sd4_*.grd' ../output/exp_sd4
+mv: cannot stat `at*sd4_*.grd': No such file or directory
+++ mv 'day*sd4.ctl' ../output/exp_sd4
+mv: cannot stat `day*sd4.ctl': No such file or directory
+++ mv 'day*sd4_*.grd' ../output/exp_sd4
+mv: cannot stat `day*sd4_*.grd': No such file or directory
+++ cd ../output/exp_sd4
+++ chmod 644 atgcmsd4.lis

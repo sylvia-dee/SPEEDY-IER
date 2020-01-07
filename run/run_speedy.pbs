@@ -1,0 +1,114 @@
+#PBS -N SPEEDY
+#PBS -q largemem
+#PBS -l nodes=coltrane.local:ppn=1
+#PBS -o SPEEDY.out
+#PBS -e SPEEDY.err
+#PBS -S /bin/bash
+
+export LD_LIBRARY_PATH=/opt/intel/lib/fce
+export PBS_0_WORKDIR=/home/geovault-00/julieneg/SPEEDY/SPEEDY-IER_05/run
+export PATH=./:/usr/geosys/x86_64/intel/fce/9.0/bin:/usr/geosys/passcal/other/bin:/usr/geosys/passcal/bin:/usr/geosys/apache-ant/default/bin:/usr/geosys/x86_64/GMT/latest/bin:/usr/geosys/x86_64/bin:/usr/geosys/bin:/usr/geosys/i386/bin:/usr/local/bin:/usr/geosys/x86_64/bin:/usr/geosys/x86_64/pgi/linux86-64/6.1/bin:/share/apps/python/2.5/bin:/usr/geosys/TauP/default/bin:/usr/geosys/sod/default/bin:/usr/geosys/x86_64/sac/bin:/usr/geosys/JWEED/default:/usr/geosys/x86_64/intel/idbe/9.0/bin:/usr/geosys/x86_64/intel/fce/9.0/bin:/usr/geosys/x86_64/intel/cce/9.0/bin:/usr/geosys/x86_64/igmt/default/default/:/opt/antelope/4.10/bin:/opt/antelope/4.10/bin:/opt/antelope/perl/bin:/opt/antelope/tcltk8.4.4/bin:/usr/sbin:/usr/geosys/TauP/default/bin:/usr/geosys/x86_64/opengrads/default:/usr/geosys/JWEED/3.12:/usr/java/default/bin:/share/apps/python/2.5/bin:/usr/geosys/TauP/default/bin:/usr/geosys/sod/default/bin:/usr/geosys/x86_64/sac/bin:/usr/geosys/JWEED/default:/usr/geosys/x86_64/intel/idbe/9.0/bin:/usr/geosys/x86_64/intel/fce/9.0/bin:/usr/geosys/x86_64/intel/cce/9.0/bin:/usr/geosys/x86_64/igmt/default/default/:/usr/geosys/TauP/default/bin:/usr/geosys/x86_64/opengrads/default:/usr/geosys/JWEED/3.12:/usr/java/default/bin:/usr/geosys/passcal/other/bin:/usr/geosys/passcal/bin:/usr/geosys/apache-ant/default/bin:/usr/geosys/x86_64/GMT/latest/bin:/usr/geosys/x86_64/bin:/usr/geosys/bin:/usr/geosys/i386/bin:/usr/local/bin:/usr/geosys/x86_64/bin:/usr/geosys/x86_64/pgi/linux86-64/6.1/bin:/share/apps/python/2.5/bin:/usr/geosys/TauP/default/bin:/usr/geosys/sod/default/bin:/usr/geosys/x86_64/sac/bin:/usr/geosys/JWEED/default:/usr/geosys/x86_64/intel/idbe/9.0/bin:/usr/geosys/x86_64/intel/fce/9.0/bin:/usr/geosys/x86_64/intel/cce/9.0/bin:/usr/geosys/x86_64/igmt/default/default/:/usr/geosys/TauP/default/bin:/usr/geosys/x86_64/opengrads/default:/usr/geosys/JWEED/3.12:/usr/java/default/bin:/share/apps/python/2.5/bin:/usr/geosys/TauP/default/bin:/usr/geosys/sod/default/bin:/usr/geosys/x86_64/sac/bin:/usr/geosys/JWEED/default:/usr/geosys/x86_64/intel/idbe/9.0/bin:/usr/geosys/x86_64/intel/fce/9.0/bin:/usr/geosys/x86_64/intel/cce/9.0/bin:/usr/geosys/x86_64/igmt/default/default/:/usr/geosys/TauP/default/bin:/usr/lib64/qt-3.3/bin:/usr/geosys/x86_64/opengrads/default:/usr/kerberos/bin:/usr/geosys/JWEED/3.12:/usr/java/default/bin:/usr/lib64/ccache:/usr/bin:/bin:/sbin:/usr/geosys/x86_64/grads/default/bin:/usr/NX/bin:/usr/geosys/x86_64/grads/default/bin:/home/geovault-00/julieneg/bin:/usr/X11R6/bin:/usr/geosys/x86_64/grads/default/bin:/usr/NX/bin:/usr/geosys/x86_64/grads/default/bin:/home/geovault-00/julieneg/bin:/usr/geosys/x86_64/grads/default/bin:/usr/NX/bin:/usr/geosys/x86_64/grads/default/bin:/home/geovault-00/julieneg/bin:/usr/geosys/x86_64/grads/default/bin:/usr/NX/bin:/usr/geosys/x86_64/grads/default/bin:/home/geovault-00/julieneg/bin
+
+cd /home/geovault-00/julieneg/SPEEDY/SPEEDY-IER_05/run
+
+set -x
+ 
+#limit stacksize 150000
+
+cd ../tmp
+
+#
+###---modification for coupling start		
+#
+ 
+/bin/rm ../results/fort.*	
+
+#  cpl.org file is the fluxes for the first ocean day on the atmos model grid, if this file does not exist model fails	
+cp ../results/cpl.org ../results/fort.105
+	
+#   Prepare data signal controlers for writer and reader
+cat > ../results/fort.101 << --
+0	
+--
+
+cp ../results/fort.101 ../results/fort.104
+	
+cat > ../results/fort.103 << --
+1
+--
+
+cp ../results/fort.103 ../results/fort.106
+
+#
+# fort.200 is character string directy where the results are saved and both ocean and atmos
+# write and read from
+#
+	
+cat > fort.200 << --
+'../results'	
+--
+		
+#
+# junk generate fort.102 which is "empty" (i.e., no sst ready to be read)
+# ocean will update fort.102 when sst is ready
+	
+/bin/rm junk.f
+cat > junk.f << --
+
+        program main
+        real*8 fnum
+        fnum=102.0
+        write(102)fnum
+        stop
+        end
+--
+ifort junk.f
+a.out
+mv fort.102 ../results/fort.102
+/bin/rm a.out			
+
+#		
+###---modification for coupling end
+#
+				
+F_UFMTENDIAN=big
+export F_UFMTENDIAN
+
+echo 'the executable file...'
+ls -l speedy.exec
+
+
+#
+# RUN MODEL
+#
+	
+ulimit -s unlimited
+ulimit -d unlimited	
+
+time ./speedy.exec > out.lis
+
+mv out.lis ../output/exp_sylvia/atgcmsylvia.lis
+mv fort.10 ../output/exp_sylvia/atgcmsylvia.rst
+
+mv at*sylvia.ctl   ../output/exp_sylvia
+mv at*sylvia_*.grd ../output/exp_sylvia
+
+mv day*sylvia.ctl   ../output/exp_sylvia
+mv day*sylvia_*.grd ../output/exp_sylvia
+
+cp fort.51 ../output/exp_sylvia	
+	
+cd ../output/exp_sylvia
+
+chmod 644 at*sylvia.*
+
+#
+###---modification for coupling start		
+#
+#  SAVE DATA
+#
+echo "saving results and restart data" 
+cp ../results/fort.105 ../results/cpl
+#
+###---modification for coupling start		
+#
