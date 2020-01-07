@@ -15,24 +15,30 @@ Publication Link: https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2014J
 Compilation and run instructions for SPEEDY-IER:
 
 
-To compile, go into the 'run' directory and use the command >> ./run_speedy.bash T30 DR1 0
-You have to give it those three commands, as specified in the bash script: the resolution 
+To compile, change directory (cd) into 'run' and use the command:
+
+>> ./run_speedy.bash T30 XXX 0
+
+Those three commands, as specified in the bash script, are: the resolution 
 (T30/T21), experiment name (3 characters only), and restart (0 for no, 1 for yes).
 
-This bash script should compile the model, searching for all the source code in the 'source' 
-file (this is where the fortran 'makefile' is. 
+This bash script will compile the model, searching for all the source code in the 'source' 
+file (this is where the fortran 'makefile' is). 
 
-To run the model, use 'run_speedy-ier.pbs' which should appear in the temp folder created
+To run the model, >> 'run_speedy-ier.pbs' 
+
+This PBS file should appear in the temp folder created
 upon compilation with the run name (e.g. TMP_XXX). 
 
 When you run the model, it will send a call to open the input files, which are in v40.input. 
-This is the time step, physics parameters, etc. 
+This initialization file includes time step information, physics parameters, etc. 
 
 When you run the model it should ask you four questions. 
-One is "would you like to modify the time stepping parameters?" 
+One is "would you like to modify the time stepping parameters?"
+
 -- You can say "y" to this and then change the start date depending on what input files you are using. 
 
-If you wanted to run it with historical SSTs you'd have to start at 1850, etc. 
+For example, to run SPEEDY-IER with historical SSTs, IYEAR=1980. 
 Then change the variable 'nmonths' to reflect the number of years you want it to run for. 
 
 Example:
@@ -42,4 +48,6 @@ You can also modify these fields directly in the ver40.input folder.
 
 The "data" folder contains the forcing files. 
 You can reconfigure the file "inpfiles.s" which is in ver40.input to change which forcing files are used. 
+
+SD Known issues: bias in upper mid-latitude water isotopes in vapor due to convection physics. Bug fix in progress. 
 
